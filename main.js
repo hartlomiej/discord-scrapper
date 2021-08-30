@@ -1,7 +1,7 @@
 const Discord = require('discord.js');
 const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
-const channelID = "856171742526177320";
-const botToken = "ODY5NTc3MzA4OTk3MDUwMzk5.YQAO-g.FVb-AUHtlEk66jZt1CnbqrhYS34";
+const channelID = "";
+const botToken = "";
 function gettime(timestamp) {
   return new Date(timestamp).toISOString().replace('T', ' ').substring(0, 19)
 }
