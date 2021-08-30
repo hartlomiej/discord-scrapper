@@ -1,21 +1,21 @@
 const Discord = require('discord.js');
-const client = new Discord.Client();
-const channelID = "";
-const botToken = "";
+const client = new Discord.Client({ intents: [Discord.Intents.FLAGS.GUILDS, Discord.Intents.FLAGS.GUILD_MESSAGES] });
+const channelID = "856171742526177320";
+const botToken = "ODY5NTc3MzA4OTk3MDUwMzk5.YQAO-g.FVb-AUHtlEk66jZt1CnbqrhYS34";
 function gettime(timestamp) {
   return new Date(timestamp).toISOString().replace('T', ' ').substring(0, 19)
 }
 client.on(`ready`, () => {
   console.log(`Logged in as ${client.user.tag}!`);
   async function getmsgs(chan_id) {
-    chan = client.channels.get(chan_id);
-    let messages = await chan.fetchMessages({
+    chan = client.channels.resolve(chan_id);
+    let messages = await chan.messages.fetch({
       limit: 100
     });
     let allMessages = messages.clone();
     while (messages.size > 0) {
       console.log("Messages: " + allMessages.size);
-      messages = await chan.fetchMessages({
+      messages = await chan.messages.fetch({
         limit: 100,
         before: messages.last().id
       });
@@ -23,15 +23,18 @@ client.on(`ready`, () => {
     }
     parsed = [...allMessages.values()].map(msg => {
       return {
-        author: msg.author.tag.replace(/ /g, '_'),
-        date: gettime(msg.createdTimestamp),
-        content: msg.cleanContent.replace(/[\r\n]+/gm, ' ')
+        attachment: msg.attachments.first() ? msg.attachments.first().url : null,
+        author_id: msg.author.id,
+        author_username: msg.author.tag,
+        date: msg.createdTimestamp,
+        content: msg.cleanContent
       }
     });
     for (i = parsed.length - 1; i >= 0; i--) {
-      line = `[${parsed[i].date}] <${parsed[i].author}> ${parsed[i].content}`;
+      line = `[${gettime(parsed[i].date)}] <${parsed[i].author_username}> ${parsed[i].content.replace(/[\r\n]+/gm, ' ')}`;
       console.log(line)
     }
+    //console.log(JSON.stringify(parsed))
   }
   getmsgs(channelID);
 });
